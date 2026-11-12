@@ -1,0 +1,739 @@
+openapi: 3.0.3
+
+info:
+  title: UnaHur Anti-Social Net API
+  version: 1.0.0
+  description: Documentación de la API UnaHur Anti-Social Net desarrollada con Express y Sequelize.
+
+servers:
+  - url: /
+    description: Servidor local de desarrollo
+
+paths:
+  # =========================
+  # USUARIOS
+  # =========================
+  /users:
+    get:
+      summary: Obtener usuarios
+      responses:
+        "200":
+          description: Lista de usuarios
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Crear usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickName:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+              required:
+                - nickName
+            example:
+              nickName: caballero123
+      responses:
+        "201":
+          description: Usuario creado con éxito
+        "400":
+          description: Datos inválidos
+        "409":
+          description: El apodo ya existe
+        "500":
+          description: Error interno del servidor
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador del usuario
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Obtener un usuario por ID
+      responses:
+        "200":
+          description: Usuario encontrado
+        "400":
+          description: ID inválido
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error interno del servidor
+
+    put:
+      summary: Modificar un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickName:
+                  type: string
+                  minLength: 3
+                  maxLength: 100
+              required:
+                - nickName
+            example:
+              nickName: nuevoApodo
+      responses:
+        "200":
+          description: Usuario modificado con éxito
+        "400":
+          description: ID o datos inválidos
+        "404":
+          description: Usuario no encontrado
+        "409":
+          description: Conflicto con un apodo existente
+        "500":
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar un usuario
+      responses:
+        "200":
+          description: Usuario eliminado con éxito
+        "400":
+          description: ID inválido
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error interno del servidor
+
+  /users/{id}/siguiendo:
+    get:
+      summary: Obtener usuarios que sigue un usuario
+      description: Devuelve la lista de usuarios seguidos por el usuario indicado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del usuario
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Lista de usuarios seguidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    nickName:
+                      type: string
+        "400":
+          description: ID inválido
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error al obtener los usuarios seguidos
+
+  /users/{id}/seguidores:
+    get:
+      summary: Obtener seguidores de un usuario
+      description: Devuelve la lista de usuarios que siguen al usuario indicado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Identificador del usuario
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        "200":
+          description: Lista de seguidores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    nickName:
+                      type: string
+        "400":
+          description: ID inválido
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error al obtener los seguidores
+  # =========================
+  # PUBLICACIONES
+  # =========================
+  /posts:
+    get:
+      summary: Obtener publicaciones
+      responses:
+        "200":
+          description: Lista de publicaciones
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Crear publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  minLength: 1
+                  maxLength: 300
+                userId:
+                  type: integer
+                  minimum: 1
+              required:
+                - description
+                - userId
+            example:
+              description: Mi primera publicación
+              userId: 1
+      responses:
+        "201":
+          description: Publicación creada con éxito
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Usuario no encontrado
+        "500":
+          description: Error interno del servidor
+
+  /posts/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la publicación
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Obtener una publicación por ID
+      responses:
+        "200":
+          description: Publicación encontrada
+        "400":
+          description: ID inválido
+        "404":
+          description: Publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+    put:
+      summary: Modificar una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  minLength: 1
+                  maxLength: 300
+                userId:
+                  type: integer
+                  minimum: 1
+              required:
+                - description
+                - userId
+            example:
+              description: Descripción modificada
+              userId: 1
+      responses:
+        "200":
+          description: Publicación modificada con éxito
+        "400":
+          description: Datos o ID inválidos
+        "404":
+          description: Publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar una publicación
+      responses:
+        "200":
+          description: Publicación eliminada con éxito
+        "400":
+          description: ID inválido
+        "404":
+          description: Publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+  # Agregar una imagen a una publicación
+  /posts/{id}/images:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la publicación
+        schema:
+          type: integer
+          minimum: 1
+
+    post:
+      summary: Agregar una imagen a una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 200
+              required:
+                - url
+            example:
+              url: https://example.com/imagen.jpg
+      responses:
+        "201":
+          description: Imagen agregada con éxito
+        "400":
+          description: URL o ID inválido
+        "404":
+          description: Publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+  /posts/{id}/images/{imageId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la publicación
+        schema:
+          type: integer
+          minimum: 1
+      - name: imageId
+        in: path
+        required: true
+        description: Identificador de la imagen
+        schema:
+          type: integer
+          minimum: 1
+
+    delete:
+      summary: Quitar una imagen de una publicación
+      responses:
+        "200":
+          description: Imagen quitada con éxito
+        "400":
+          description: Alguno de los IDs es inválido
+        "404":
+          description: Publicación o imagen no encontrada
+        "500":
+          description: Error interno del servidor
+
+  # Asociar y quitar etiquetas de publicaciones
+  /posts/{id}/tags:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la publicación
+        schema:
+          type: integer
+          minimum: 1
+
+    post:
+      summary: Asociar una etiqueta a una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagId:
+                  type: integer
+                  minimum: 1
+              required:
+                - tagId
+            example:
+              tagId: 1
+      responses:
+        "200":
+          description: Etiqueta asociada con éxito
+        "400":
+          description: Datos o ID inválidos
+        "404":
+          description: Publicación o etiqueta no encontrada
+        "500":
+          description: Error interno del servidor
+
+  /posts/{id}/tags/{tagId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la publicación
+        schema:
+          type: integer
+          minimum: 1
+      - name: tagId
+        in: path
+        required: true
+        description: Identificador de la etiqueta
+        schema:
+          type: integer
+          minimum: 1
+
+    delete:
+      summary: Quitar una etiqueta de una publicación
+      responses:
+        "200":
+          description: Etiqueta quitada con éxito
+        "400":
+          description: Alguno de los IDs es inválido
+        "404":
+          description: Publicación o etiqueta no encontrada
+        "500":
+          description: Error interno del servidor
+
+  # =========================
+  # COMENTARIOS
+  # =========================
+  /comments:
+    get:
+      summary: Obtener comentarios
+      responses:
+        "200":
+          description: Lista de comentarios
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Crear comentario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                userId:
+                  type: integer
+                  minimum: 1
+                postId:
+                  type: integer
+                  minimum: 1
+              required:
+                - content
+                - userId
+                - postId
+            example:
+              content: Muy buena publicación
+              userId: 1
+              postId: 1
+      responses:
+        "201":
+          description: Comentario creado con éxito
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Usuario o publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+  /comments/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador del comentario
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Obtener un comentario por ID
+      responses:
+        "200":
+          description: Comentario encontrado
+        "400":
+          description: ID inválido
+        "404":
+          description: Comentario no encontrado
+        "500":
+          description: Error interno del servidor
+
+    put:
+      summary: Modificar el contenido de un comentario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+              required:
+                - content
+            example:
+              content: Comentario modificado
+      responses:
+        "200":
+          description: Comentario modificado con éxito
+        "400":
+          description: ID o contenido inválido
+        "404":
+          description: Comentario no encontrado
+        "500":
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar un comentario
+      responses:
+        "200":
+          description: Comentario eliminado con éxito
+        "400":
+          description: ID inválido
+        "404":
+          description: Comentario no encontrado
+        "500":
+          description: Error interno del servidor
+
+  # =========================
+  # ETIQUETAS
+  # =========================
+  /tags:
+    get:
+      summary: Obtener etiquetas
+      responses:
+        "200":
+          description: Lista de etiquetas
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Crear etiqueta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+              required:
+                - name
+            example:
+              name: videojuegos
+      responses:
+        "201":
+          description: Etiqueta creada con éxito
+        "400":
+          description: Datos inválidos
+        "500":
+          description: Error interno del servidor
+
+  /tags/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la etiqueta
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Obtener etiqueta por ID
+      responses:
+        "200":
+          description: Etiqueta encontrada
+        "400":
+          description: ID inválido
+        "404":
+          description: Etiqueta no encontrada
+        "500":
+          description: Error interno del servidor
+
+    put:
+      summary: Modificar etiqueta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+              required:
+                - name
+            example:
+              name: juegos
+      responses:
+        "200":
+          description: Etiqueta modificada con éxito
+        "400":
+          description: ID o datos inválidos
+        "404":
+          description: Etiqueta no encontrada
+        "500":
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar etiqueta
+      responses:
+        "200":
+          description: Etiqueta eliminada con éxito
+        "400":
+          description: ID inválido
+        "404":
+          description: Etiqueta no encontrada
+        "500":
+          description: Error interno del servidor
+
+  # =========================
+  # IMÁGENES
+  # =========================
+  /images:
+    get:
+      summary: Obtener imágenes
+      responses:
+        "200":
+          description: Lista de imágenes
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Crear registro de imagen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 200
+                postId:
+                  type: integer
+                  minimum: 1
+              required:
+                - url
+                - postId
+            example:
+              url: https://example.com/imagen.jpg
+              postId: 1
+      responses:
+        "201":
+          description: Imagen creada con éxito
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+  /images/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Identificador de la imagen
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      summary: Obtener imagen por ID
+      responses:
+        "200":
+          description: Imagen encontrada
+        "400":
+          description: ID inválido
+        "404":
+          description: Imagen no encontrada
+        "500":
+          description: Error interno del servidor
+
+    put:
+      summary: Modificar imagen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 200
+                postId:
+                  type: integer
+                  minimum: 1
+              required:
+                - url
+                - postId
+            example:
+              url: https://example.com/imagen-nueva.jpg
+              postId: 1
+      responses:
+        "200":
+          description: Imagen modificada con éxito
+        "400":
+          description: ID o datos inválidos
+        "404":
+          description: Imagen o publicación no encontrada
+        "500":
+          description: Error interno del servidor
+
+    delete:
+      summary: Eliminar registro de imagen
+      responses:
+        "200":
+          description: Imagen eliminada con éxito
+        "400":
+          description: ID inválido
+        "404":
+          description: Imagen no encontrada
+        "500":
+          description: Error interno del servidor
