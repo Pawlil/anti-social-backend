@@ -20,6 +20,13 @@ const verificarSiElPostExiste = async (req, res, next) => {
         {
           model: Comment,
           as: "comments",
+          include: [
+            {
+              model: User,
+              as: "user",
+              attributes: ["id", "nickName"],
+            },
+          ],
         },
       ],
     });

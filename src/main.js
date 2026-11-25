@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const routerUser = require("../routes/userRoutes");
 const routerPost = require("../routes/postRoutes");
 const routerTag = require("../routes/tagRoutes");
@@ -19,6 +20,7 @@ const PORT = process.env.PORT;
 
 app.set("json spaces", 2);
 app.use(express.json());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/user", routerUser);
 app.use("/post", routerPost);
